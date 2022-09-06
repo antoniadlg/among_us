@@ -1,17 +1,14 @@
-# Among us random selection
-
-#library(write)
 
 tasks <- read.csv("~/Downloads/amongus_tasks.csv")
 
 task_selector <- function(n, 
                           n_crewmembers,
-                          n_killers, 
+                          n_imposters, 
                           n_tasks) 
   #' @Description: Takes in a number of people and 
   #' @param n: integer, total players
   #' @param n_crewmembers: integer, number of people playing 
-  #' @param n_killers: integer, number of killers in the game 
+  #' @param n_imposters: integer, number of killers in the game 
   #' @Returns: A dataframe, with each number mapped to a member type and their assigned tasks 
 {
   numbers <- seq(1:n)
@@ -21,25 +18,23 @@ task_selector <- function(n,
     number = numeric(),
     killer = logical(),
     tasks = list())
-  # ,
-  #   tasks = character())
   
-  killers <- sample(numbers, n_killers, replace = FALSE)
-  non_killers <- numbers[!(numbers %in% killers)]
+  killers <- sample(numbers, n_imposters, replace = FALSE)
+  non_imposters <- numbers[!(numbers %in% killers)]
   
   for (i in 1:length(killers)) {
     task_tibble <- 
       task_tibble %>% add_row(number = killers[i], killer = TRUE, tasks = NULL)
   }
   
-  for (i in 1:length(non_killers)) {
+  for (i in 1:length(non_imposters)) {
     
     member_tasks <- tasks %>% sample_n(size = n_tasks)
     
     all_tasks <- member_tasks %>% pull(Task.number) %>% sort() %>% list()
     task_tibble <- 
       task_tibble %>% 
-      add_row(number = non_killers[i],
+      add_row(number = non_imposters[i],
               killer = FALSE, 
               tasks = all_tasks)
   }
